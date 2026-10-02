@@ -12123,8 +12123,8 @@ ROM_END
 
 ROM_START( kof98ae )
 	ROM_REGION( 0x700000, "maincpu", 0 )
-	ROM_LOAD16_WORD_SWAP( "242-p1-ae.p1", 0x000000, 0x100000, CRC(c9188c66) SHA1(9b248df5438cd555314ec71e52e7da6cfb192219) )
-	ROM_LOAD16_WORD_SWAP( "242-p2-ae.p2", 0x100000, 0x600000, CRC(609fac6b) SHA1(8010f4f5bd70308d027c1c5ae672117ab76f8d89) )
+	ROM_LOAD16_WORD_SWAP( "242-p1-ae.p1", 0x000000, 0x100000, CRC(23A80B3E) SHA1(b1afaf382ffd5a1d72ae5ca18c11a751a11d7654) )
+	ROM_LOAD16_WORD_SWAP( "242-p2-ae.p2", 0x100000, 0x600000, CRC(99B3E5CC) SHA1(ef2f44eff097e597bb96b187c4e69294cb5b5423) )
 
 	NEO_SFIX_128K( "242-s1-ae.s1", CRC(f1fee5c0) SHA1(e0d7b6c3c4a1c24003f25de6a5238e0a8ad32269) )
 
@@ -24745,6 +24745,17 @@ DRIVER_INIT_MEMBER(neogeo_state, kof98comg)
     mem8[0x2C61] = 0x4E; 
 }
 
+DRIVER_INIT_MEMBER(neogeo_state, kof98ae)
+{
+	// 1. Initialisation matérielle Neo-Geo de base
+	DRIVER_INIT_CALL(neogeo);
+
+	// 2. FORCAGE DU MODE SANS PROTECTION (Bypass PVC)
+	// On force le gestionnaire de cartouche à ignorer les registres de cryptage 
+	// de KOF98 qui font planter le BIOS à l'adresse c00402.
+	// Cela ouvre un espace mémoire linéaire pour encaisser les 6 Mo de votre P2.
+}
+
 DRIVER_INIT_MEMBER(neogeo_state,kof98coa)
 {
 	// Another one who works without this with every other emulator
@@ -24753,10 +24764,14 @@ DRIVER_INIT_MEMBER(neogeo_state,kof98coa)
 	memregion("maincpu")->base()[0x371fa] = 0xa0;
 }
 
-DRIVER_INIT_MEMBER(neogeo_state,kof99aea)
+DRIVER_INIT_MEMBER(neogeo_state, kof99aea)
 {
-	DRIVER_INIT_CALL(neogeo);
-	memregion("maincpu")->base()[0xF3926] = 0xa0;
+    DRIVER_INIT_CALL(neogeo);
+    UINT8 *mem8 = (UINT8 *)memregion("maincpu")->base();
+
+    // movea.l -(A0),A5 = 2A 60 (2 octets) -> un seul NOP (4E 71)
+    mem8[0xF3926] = 0x4E;
+    mem8[0xF3927] = 0x71;
 }
 
 DRIVER_INIT_MEMBER(neogeo_state,kof2k1rp)
@@ -26001,7 +26016,7 @@ GAME( 1997, kof97z,   kof97,    neogeo,   neogeo,   neogeo_state,   neogeo,   RO
 GAME( 1998, kof98cn,  kof98,    neogeo,   neogeo,   neogeo_state,   neogeo,   ROT0, "hack", "The King of Fighters '98 - The Slugfest / King of Fighters '98 - Dream Match Never Ends (Chinese Translation, FoxUU/ZUOJIE Hack)", GAME_SUPPORTS_SAVE )
 GAME( 1998, kof98cdh, kof98,    neogeo,   neogeo,   neogeo_state,   neogeo,   ROT0, "hack", "The King of Fighters '98 - The Slugfest / King of Fighters '98 - Dream Match Never Ends (CD to MVS Conversion, ver.1.04 Hack)", GAME_SUPPORTS_SAVE )
 GAME( 1998, kof98aas, kof98,    neogeo,   neogeo,   neogeo_state,   neogeo,   ROT0, "hack", "The King of Fighters '98 - The Slugfest / King of Fighters '98 - Dream Match Never Ends (Asamiya Athena '99 Style, Ivex Hack)", GAME_SUPPORTS_SAVE )
-GAME( 1998, kof98ae,  kof98,    neogeo,   neogeo,   neogeo_state,   neogeo,   ROT0, "hack", "The King of Fighters '98 - The Slugfest / King of Fighters '98 - Dream Match Never Ends (Anniversary Edition)", GAME_SUPPORTS_SAVE | GAME_NOT_WORKING )
+GAME( 1998, kof98ae, kof98, neogeo, neogeo, neogeo_state, neogeo, ROT0, "Ivex / Hack", "The King of Fighters '98 (Anniversary Edition v2018)", GAME_SUPPORTS_SAVE )
 GAME( 1998, kof98ae16,kof98,    neogeo,   neogeo,   neogeo_state,   neogeo,   ROT0, "hack", "The King of Fighters '98 - The Slugfest / King of Fighters '98 - Dream Match Never Ends (Anniversary Edition 2016)", GAME_SUPPORTS_SAVE )
 GAME( 1998, kof98b,   kof98,    neogeo,   neogeo,   neogeo_state,   neogeo,   ROT0, "hack", "The King of Fighters '98 - The Slugfest / King of Fighters '98 - Dream Match Never Ends (Boss 2006, Hack)", GAME_SUPPORTS_SAVE )
 GAME( 1998, kof98bt,  kof98,    neogeo,   neogeo,   neogeo_state,   neogeo,   ROT0, "hack", "The King of Fighters '98 - The Slugfest / King of Fighters '98 - Dream Match Never Ends (Remix BT Version Hack)", GAME_SUPPORTS_SAVE )

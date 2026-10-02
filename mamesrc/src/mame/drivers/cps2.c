@@ -10419,7 +10419,7 @@ GAME( 2001, progearjd,progear,  dead_cps2, cps2_2p3b, cps_state, cps2,    ROT0, 
 GAME( 2001, progearjbl,progear, dead_cps2, cps2_2p3b, cps_state, cps2,    ROT0,   "bootleg", "Progear no Arashi (Japan 010117) (decrypted bootleg)", GAME_SUPPORTS_SAVE ) // not an actual phoenix set, but works as one
 GAME( 2004, hsf2ad,   hsf2,     dead_cps2, cps2_2p6b, cps_state, cps2,    ROT0,   "bootleg", "Hyper Street Fighter II: The Anniversary Edition (Asia 040202 Phoenix Edition) (bootleg)", GAME_SUPPORTS_SAVE )
 
-/* N3hT */
+/* NEHT */
 
 ROM_START( ddsomahb )
 	ROM_REGION( CODE_SIZE, "maincpu", 0 )      /* 68000 code */
@@ -10818,6 +10818,28 @@ ROM_START( mvsce )
 	ROM_LOAD16_WORD_SWAP( "mvc.12m",   0x400000, 0x400000, CRC(7ccb1896) SHA1(74caadf3282fcc6acffb1bbe3734106f81124121) )
 ROM_END
 
+ROM_START( sf2prime )
+	ROM_REGION( CODE_SIZE, "maincpu", ROMREGION_ERASEFF )
+	ROM_LOAD16_WORD_SWAP( "c88pr.p1", 0x000000, 0x80000, CRC(5ee5a492) SHA1(6b45a085deb989abae7b9f4d0fc61817578c88eb) ) 
+	ROM_LOAD16_WORD_SWAP( "c88pr.p2", 0x080000, 0x80000, CRC(d4f8e6b0) SHA1(7352a02c274e9fe1ac9a65708cfb3181d8353194) ) 
+	ROM_LOAD16_WORD_SWAP( "c88pr.p3", 0x100000, 0x80000, CRC(2f989a93) SHA1(af51cc7390c96099f663d1ce2c6fd5cece68a9ad) ) 
+	ROM_LOAD16_WORD_SWAP( "c88pr.p4", 0x180000, 0x80000, CRC(cd24ac24) SHA1(74dc7fc5dd7418b17c031504145fdcb56e9d625f) ) 
+
+	ROM_REGION( 0x2000000, "gfx", 0 )
+	ROMX_LOAD( "c88pr.c1",   0x0000000, 0x800000, CRC(74d0902d) SHA1(787f7eb0782a3bf7a4490929a1757b2f8ee1f8b3) , ROM_GROUPWORD | ROM_SKIP(6) )
+	ROMX_LOAD( "c88pr.c2",   0x0000002, 0x800000, CRC(e9373df0) SHA1(0ffd03d3bb54c067179642ddaf2852e732554d6e) , ROM_GROUPWORD | ROM_SKIP(6) )
+	ROMX_LOAD( "c88pr.c3",   0x0000004, 0x800000, CRC(c0c2ebdf) SHA1(47704292b24dee382de4f27ffbe94576905b2b14) , ROM_GROUPWORD | ROM_SKIP(6) )
+	ROMX_LOAD( "c88pr.c4",   0x0000006, 0x800000, CRC(7c3bda15) SHA1(4dc403d0fd2cac2d5cd64849956dfbcfe2b42813) , ROM_GROUPWORD | ROM_SKIP(6) )
+
+	ROM_REGION( QSOUND_SIZE, "audiocpu", 0 )
+	ROM_LOAD( "c88pr.m1",   0x00000, 0x08000, CRC(6ce233a7) SHA1(5ff00de2fa8f31e66c9518049828d532554cb316) ) 
+	ROM_CONTINUE(           0x10000, 0x18000 )
+	ROM_LOAD( "c88.m2",     0x28000, 0x20000, CRC(2d8794aa) SHA1(c634affdc2568020cce6af97b4fa79925d9943f3) ) 
+
+	ROM_REGION( 0x800000, "qsound", 0 )
+	ROM_LOAD16_WORD_SWAP( "c88pr.q1",   0x000000, 0x800000, CRC(be977f70) SHA1(c851ce45bcb47e4b380457cea00a8011a609f5ce) ) 
+ROM_END
+
 GAME( 1996, ddsomahb, ddsom,    cps2, cps2_4p4b, cps_state,  cps2,     ROT0,   "Capcom", "Dungeons & Dragons: Shadow over Mystara (1vs4, sssskkkk Hack 09/06/29 Asia 960619)", GAME_SUPPORTS_SAVE )
 GAME( 1996, ddsomhp,  ddsom,    cps2, cps2_4p4b, cps_state,  cps2,     ROT0,   "Capcom", "Dungeons & Dragons: Shadow over Mystara (HP Revision, Pipi899 Hack 09/06/15 Euro 960223)", GAME_SUPPORTS_SAVE )
 GAME( 1995, mshyh,    msh,      cps2, cps2_2p6b, cps_state,  cps2,     ROT0,   "Capcom", "Marvel Super Heroes (Boss, Yumeji Hack, Euro 951024)", GAME_SUPPORTS_SAVE )
@@ -10831,3 +10853,4 @@ GAME( 1996, sfz2jyh,  sfa2,     cps2, cps2_2p6b, cps_state,  cps2,     ROT0,   "
 GAME( 1997, vsav2h,   vsav2,    cps2, cps2_2p6b, cps_state,  cps2,     ROT0,   "Capcom", "Vampire Savior 2: The Lord of Vampire (Enhanced Boss Hack by Blackheart Japan 970913)", GAME_SUPPORTS_SAVE )
 GAME( 1996, xmvsfrh,  xmvsf,    cps2, cps2_2p6b, cps_state,  cps2,     ROT0,   "Capcom", "X-Men Vs. Street Fighter (Enhanced Boss Hack by Blackheart Euro 960910)", GAME_SUPPORTS_SAVE )
 GAME( 1998, mvsce,    mvsc,     cps2, cps2_2p6b, cps_state,  cps2,     ROT0,   "Capcom", "Marvel Vs. Capcom: Clash of Super Heroes (Euro 980123 Fixed by IQ132)", GAME_SUPPORTS_SAVE )
+GAME( 2026, sf2prime, hsf2,     dead_cps2, cps2_2p6b, cps_state, cps2_video, ROT0, "Zero800", "Street Fighter II': Prime (v0.80)", GAME_SUPPORTS_SAVE )

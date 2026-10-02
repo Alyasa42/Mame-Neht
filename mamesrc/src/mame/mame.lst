@@ -144,7 +144,8 @@ sfz2abr 		// 27/02/1996 (c) 1996 (Brasil)
 vsav2h 			// 13/09/1997 (c) 1997 (Japan)
 xmvsfrh 		// 10/09/1996 (c) 1996 (Euro)
 mvsce 			// 12/01/1998 (c) 1998 (Euro)
-sfa3br          // 29/06/1998 (c) 1998 (Brasil)
+sfa3br                  // 29/06/1998 (c) 1998 (Brasil)
+sf2prime                // hack
 
 // Neogeo
 2020bbcd 		// 0030 hack - CD to MVS Conversion

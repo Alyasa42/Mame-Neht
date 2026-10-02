@@ -12683,7 +12683,7 @@ GAME( 1997, wof3js,      wof,      wofhfh,     wof3js,   cps_state,   wof3js,   
 GAME( 2014, wofjm,       wof,      qsound,     wof,      cps_state,   wof,      ROT0,   "hack",    "Tenchi wo Kurau II: Sekiheki no Tatakai (MEI's Counter Attack, hack)", GAME_SUPPORTS_SAVE )
 GAME( 2010, wofchdx,     wofch,    qsound,     wofch,    cps_state,   wof,      ROT0,   "hack",    "Sangokushi III Gaiden: Kakou-On's Revenge DX (hack)", GAME_SUPPORTS_SAVE )
 
-/* N3hT */
+/* Additional NehT */
 
 ROM_START( captcomh )
 	ROM_REGION( CODE_SIZE, "maincpu", 0 )      /* 68000 code */
