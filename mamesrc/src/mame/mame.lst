@@ -144,8 +144,8 @@ sfz2abr 		// 27/02/1996 (c) 1996 (Brasil)
 vsav2h 			// 13/09/1997 (c) 1997 (Japan)
 xmvsfrh 		// 10/09/1996 (c) 1996 (Euro)
 mvsce 			// 12/01/1998 (c) 1998 (Euro)
-sfa3br                  // 29/06/1998 (c) 1998 (Brasil)
-sf2prime                // hack
+sfa3br          // 29/06/1998 (c) 1998 (Brasil)
+sf2prime        // hack
 
 // Neogeo
 2020bbcd 		// 0030 hack - CD to MVS Conversion
@@ -322,6 +322,10 @@ kof99bh 		// 0251 (c) 1999 hack
 kof99d 			// 0251 (c) 1999 SNK
 kof99ae 		// 0251 (c) 1999 hack
 kof99aea 		// 0251 (c) 1999 hack
+kof99s111 		// 0251 (c) 1999 hack
+kof99s102 		// 0251 (c) 1999 hack
+kof99s185 		// 0251 (c) 1999 hack
+kof99s190 		// 0251 (c) 1999 hack
 kof99fc 		// 0251 (c) 1999 hack
 kof99fmi 		// 0251 (c) 1999 hack
 kof99hbi 		// 0251 (c) 1999 hack
