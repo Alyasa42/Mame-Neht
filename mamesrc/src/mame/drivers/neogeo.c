@@ -1956,6 +1956,16 @@ MACHINE_CONFIG_END
 	ROM_LOAD16_WORD_SWAP_BIOS( 28, "neo-epo.sp1", 0x00000, 0x020000, CRC(d27a71f1) SHA1(1b3b22092f30c4d1b2c15f04d1670eb1e9fbea07) ) /* AES Console (Asia?) Bios */ \
 	ROM_SYSTEM_BIOS( 29, "japan-aes",   "Japan AES" ) \
 	ROM_LOAD16_WORD_SWAP_BIOS( 29, "neo-po.sp1", 0x00000, 0x020000, CRC(16d0c132) SHA1(4e4a440cae46f3889d20234aebd7f8d5f522e22c) ) /* AES Console (Japan) Bios */ \
+	ROM_SYSTEM_BIOS( 30, "us-v2", "US MVS (4 slot, Ver 2)" ) \
+	ROM_LOAD16_WORD_SWAP_BIOS( 6, "sp1-u2",            0x00000, 0x020000, CRC(62f021f4) SHA1(62d372269e1b3161c64ae21123655a0a22ffd1bb) ) /* 3 Cyan - US, 4 slot - also seen with "v2" label*/ \
+	ROM_SYSTEM_BIOS( 31, "us-u4", "US MVS (U4)" ) \
+	ROM_LOAD16_WORD_SWAP_BIOS( 7, "sp1-u4.bin",        0x00000, 0x020000, CRC(1179a30f) SHA1(866817f47aa84d903d0b819d61f6ef356893d16a) ) /* 3 Green - 4 Slot (MV-4F) */ \
+	ROM_SYSTEM_BIOS( 32, "us-u3", "US MVS (U3)" ) \
+	ROM_LOAD16_WORD_SWAP_BIOS( 8, "sp1-u3.bin",        0x00000, 0x020000, CRC(2025b7a2) SHA1(73d774746196f377111cd7aa051cc8bb5dd948b3) ) /* 2 Green - 6 Slot */ \
+	ROM_SYSTEM_BIOS( 33, "japan-j3a", "Japan MVS (J3, alt)" ) \
+	ROM_LOAD16_WORD_SWAP_BIOS( 13, "sp1-j3.bin",       0x00000, 0x020000, CRC(fbc6d469) SHA1(46b2b409b5b68869e367b40c846373623edb632a) ) /* 2 Red - 6 Slot */ \
+	ROM_SYSTEM_BIOS( 34, "japan-mv1c", "Japan NEO-MVH MV1C" ) \
+	ROM_LOAD16_WORD_SWAP_BIOS( 14, "sp-j3.sp1",        0x00000, 0x080000, CRC(486cb450) SHA1(52c21ea817928904b80745a8c8d15cbad61e1dc1) ) /* 6 Red - Latest Japan BIOS (MV1C - mask ROM) */ \
 
 
 #define NEO_BIOS_AUDIO_64K(name, hash)																			\
@@ -24739,8 +24749,6 @@ DRIVER_INIT_MEMBER(neogeo_state, kof98comg)
     DRIVER_INIT_CALL(neogeo);
     UINT8 *mem8 = (UINT8 *)memregion("maincpu")->base();
 
-    // On applique le Byte-Swap obligatoire pour le mappage 16-bit de MAME
-    // 0x75 passe sur l'offset pair et 0x4E sur l'offset impair
     mem8[0x2C60] = 0x75; 
     mem8[0x2C61] = 0x4E; 
 }
