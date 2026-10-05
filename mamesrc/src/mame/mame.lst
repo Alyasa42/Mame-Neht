@@ -322,10 +322,6 @@ kof99bh 		// 0251 (c) 1999 hack
 kof99d 			// 0251 (c) 1999 SNK
 kof99ae 		// 0251 (c) 1999 hack
 kof99aea 		// 0251 (c) 1999 hack
-kof99s111 		// 0251 (c) 1999 hack
-kof99s102 		// 0251 (c) 1999 hack
-kof99s185 		// 0251 (c) 1999 hack
-kof99s190 		// 0251 (c) 1999 hack
 kof99fc 		// 0251 (c) 1999 hack
 kof99fmi 		// 0251 (c) 1999 hack
 kof99hbi 		// 0251 (c) 1999 hack
@@ -578,6 +574,35 @@ neothndr        // (c) 2012 Sebastian Mihai
 neotet          // (c) 2013 Crim / Stephen
 cphd            // (c) 2013 Le Cortex
 timesupd        // (c) 2012 NGF Dev. Inc.
+
+// HBmame Import
+kof96s52        // 214  (c) 2009 hack
+kof96s53        // 214  (c) 2007 hack
+kof96s54        // 214  (c) 2007 hack
+kof96s55        // 214  (c) 2007 hack
+kof96s56        // 214  (c) 2009 hack
+kof96s81        // 214  (c) 2007 hack
+kof97s063       // 232  /c) 2016 hack
+kof97s066       // 232  /c) 2009 hack
+kof97s067       // 232  /c) 2018 hack
+kof97s159       // 232  /c) 2018 hack
+kof97s187       // 232  /c) 2020 hack
+kof97s189       // 232  /c) 2020 hack
+kof97s201       // 232  /c) 2020 hack
+kof97s202       // 232  /c) 2020 hack
+kof97s221       // 232  /c) 1997 hack
+kof97s222       // 232  /c) 1997 hack
+kof97s225       // 232  /c) 2006 hack
+kof97s227       // 232  /c) 2006 hack
+kof97s233       // 232  /c) 2010 hack
+kof97s234       // 232  /c) 2006 hack
+kof97s308       // 232  /c) 2007 hack
+kof97s390       // 232  /c) 1997 hack
+kof97s573       // 232  /c) 2010 hack
+kof99s111 		// 0251 (c) 2016 hack
+kof99s102 		// 0251 (c) 2020 hack
+kof99s185 		// 0251 (c) 2021 hack
+kof99s190 		// 0251 (c) 2025 hack
 
 // Neogeo Earlier games
 2020bbe 		// Earlier
