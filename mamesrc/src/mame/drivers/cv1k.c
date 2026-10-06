@@ -356,59 +356,79 @@ static ADDRESS_MAP_START( cv1k_port, AS_IO, 64, cv1k_state )
 ADDRESS_MAP_END
 
 
+static INPUT_PORTS_START( cv1k_base )
+    PORT_START("DSW")       // 18000050.l (18000050.b + 3 i.e. MSB + 3, is shown as DIPSW)
+    PORT_DIPNAME(    0x00000002, 0x00000000, DEF_STR( Unknown ) ) // S2 2
+    PORT_DIPSETTING( 0x00000000, DEF_STR( Off ) )
+    PORT_DIPSETTING( 0x00000002, DEF_STR( On ) )
+    PORT_SERVICE(    0x00000001, IP_ACTIVE_HIGH ) // S2 1
+
+    PORT_START("PORT_C")
+    PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_SERVICE1 ) // Service coin
+    PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_SERVICE3 ) // Test Button on JAMMA Edge
+    PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_COIN1  ) // TODO: IMPLEMENT COIN ERROR!
+    PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_COIN2  )
+    PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_START1 )
+    PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_START2 )
+    PORT_BIT( 0xc0, IP_ACTIVE_LOW, IPT_UNKNOWN )
+
+    PORT_START("PORT_D")
+    PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_JOYSTICK_UP    ) PORT_PLAYER(1)
+    PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_JOYSTICK_DOWN  ) PORT_PLAYER(1)
+    PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_JOYSTICK_LEFT  ) PORT_PLAYER(1)
+    PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_JOYSTICK_RIGHT ) PORT_PLAYER(1)
+    PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_BUTTON1        ) PORT_PLAYER(1)
+    PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON2        ) PORT_PLAYER(1)
+    PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_BUTTON3        ) PORT_PLAYER(1)
+    PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_BUTTON4        ) PORT_PLAYER(1)
+
+    PORT_START("PORT_F")
+    PORT_BIT( 0x02, IP_ACTIVE_LOW,  IPT_SERVICE2 ) // S3 Test Push Button
+    PORT_BIT( 0xfd, IP_ACTIVE_LOW,  IPT_UNKNOWN )
+
+    PORT_START("PORT_L")    // 4000134.b, 4000136.b
+    PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_JOYSTICK_UP    ) PORT_PLAYER(2)
+    PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_JOYSTICK_DOWN  ) PORT_PLAYER(2)
+    PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_JOYSTICK_LEFT  ) PORT_PLAYER(2)
+    PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_JOYSTICK_RIGHT ) PORT_PLAYER(2)
+    PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_BUTTON1        ) PORT_PLAYER(2)
+    PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON2        ) PORT_PLAYER(2)
+    PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_BUTTON3        ) PORT_PLAYER(2)
+    PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_BUTTON4        ) PORT_PLAYER(2)
+
+    PORT_START( "EEPROMOUT" )
+    PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_OUTPUT ) PORT_WRITE_LINE_DEVICE_MEMBER("eeprom", rtc9701_device, write_bit)
+    PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_OUTPUT ) PORT_WRITE_LINE_DEVICE_MEMBER("eeprom", rtc9701_device, set_clock_line)
+    PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_OUTPUT ) PORT_WRITE_LINE_DEVICE_MEMBER("eeprom", rtc9701_device, set_cs_line)
+INPUT_PORTS_END
+
 static INPUT_PORTS_START( cv1k )
-	PORT_START("DSW")       // 18000050.l (18000050.b + 3 i.e. MSB + 3, is shown as DIPSW)
-//  PORT_BIT(        0xfcfffffc, IP_ACTIVE_LOW, IPT_UNKNOWN )
-	PORT_DIPNAME(    0x00000002, 0x00000000, DEF_STR( Unknown ) ) // S2 2
-	PORT_DIPSETTING( 0x00000000, DEF_STR( Off ) )
-	PORT_DIPSETTING( 0x00000002, DEF_STR( On ) )
-	PORT_SERVICE(    0x00000001, IP_ACTIVE_HIGH ) // S2 1
+    PORT_INCLUDE( cv1k_base )
 
-	PORT_START("PORT_C")
-	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_SERVICE1 ) // Service coin
-	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_SERVICE3 ) // Test Button on JAMMA Edge
-	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_COIN1  ) // TODO: IMPLEMENT COIN ERROR!
-	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_COIN2  )
-	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_START1 )
-	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_START2 )
-	PORT_BIT( 0xc0, IP_ACTIVE_LOW, IPT_UNKNOWN )
+    PORT_START("BLITCFG") // the Blitter Delay code isn't threadsafe, DO NOT turn on by default
+    PORT_CONFNAME( 0x0001,  0x0000, "Use (unsafe) Blitter Delay (requires reset)" )
+    PORT_CONFSETTING(       0x0000, DEF_STR( No ) )
+    PORT_CONFSETTING(       0x0001, DEF_STR( Yes ) )
 
-	PORT_START("PORT_D")
-	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_JOYSTICK_UP    ) PORT_PLAYER(1)
-	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_JOYSTICK_DOWN  ) PORT_PLAYER(1)
-	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_JOYSTICK_LEFT  ) PORT_PLAYER(1)
-	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_JOYSTICK_RIGHT ) PORT_PLAYER(1)
-	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_BUTTON1        ) PORT_PLAYER(1)
-	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON2        ) PORT_PLAYER(1)
-	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_BUTTON3        ) PORT_PLAYER(1)
-	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_BUTTON4        ) PORT_PLAYER(1)
+    PORT_START("BLITRATE")
+    PORT_ADJUSTER(50, "Blitter Delay")
+INPUT_PORTS_END
 
-	PORT_START("PORT_F")
-	PORT_BIT( 0x02, IP_ACTIVE_LOW,  IPT_SERVICE2 ) // S3 Test Push Button
-	PORT_BIT( 0xfd, IP_ACTIVE_LOW,  IPT_UNKNOWN )
+static INPUT_PORTS_START( cv1ks )
+    PORT_INCLUDE( cv1k_base )
 
-	PORT_START("PORT_L")    // 4000134.b, 4000136.b
-	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_JOYSTICK_UP    ) PORT_PLAYER(2)
-	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_JOYSTICK_DOWN  ) PORT_PLAYER(2)
-	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_JOYSTICK_LEFT  ) PORT_PLAYER(2)
-	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_JOYSTICK_RIGHT ) PORT_PLAYER(2)
-	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_BUTTON1        ) PORT_PLAYER(2)
-	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON2        ) PORT_PLAYER(2)
-	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_BUTTON3        ) PORT_PLAYER(2)
-	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_BUTTON4        ) PORT_PLAYER(2)
+    PORT_MODIFY("DSW")
+    PORT_DIPNAME( 0x00000002, 0x00000000, "Special Mode" )
+    PORT_DIPSETTING( 0x00000000, DEF_STR( Off ) )
+    PORT_DIPSETTING( 0x00000002, DEF_STR( On ) )
 
-	PORT_START( "EEPROMOUT" )
-	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_OUTPUT ) PORT_WRITE_LINE_DEVICE_MEMBER("eeprom", rtc9701_device, write_bit)
-	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_OUTPUT ) PORT_WRITE_LINE_DEVICE_MEMBER("eeprom", rtc9701_device, set_clock_line)
-	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_OUTPUT ) PORT_WRITE_LINE_DEVICE_MEMBER("eeprom", rtc9701_device, set_cs_line)
+    PORT_START("BLITCFG")
+    PORT_CONFNAME( 0x0001,  0x0000, "Use (unsafe) Blitter Delay (requires reset)" )
+    PORT_CONFSETTING(       0x0000, DEF_STR( No ) )
+    PORT_CONFSETTING(       0x0001, DEF_STR( Yes ) )
 
-	PORT_START("BLITCFG") // the Blitter Delay code isn't threadsafe, DO NOT turn on by default
-	PORT_CONFNAME( 0x0001,  0x0000, "Use (unsafe) Blitter Delay (requires reset)" )
-	PORT_CONFSETTING(       0x0000, DEF_STR( No ) )
-	PORT_CONFSETTING(       0x0001, DEF_STR( Yes ) )
-
-	PORT_START("BLITRATE")
-	PORT_ADJUSTER(50, "Blitter Delay")
+    PORT_START("BLITRATE")
+    PORT_ADJUSTER(50, "Blitter Delay")
 INPUT_PORTS_END
 
 
@@ -809,18 +829,6 @@ ROM_START( dsmbl )
 	ROM_LOAD16_WORD_SWAP( "u24", 0x400000, 0x400000, CRC(3b673326) SHA1(1ae847eb4e752fef1d72081d82344f0ad0537c31) )
 ROM_END
 
-ROM_START( dfkbl )
-	ROM_REGION( 0x400000, "maincpu", ROMREGION_ERASEFF)
-	ROM_LOAD16_WORD_SWAP( "u4", 0x000000, 0x400000, CRC(8092ca9d) SHA1(75e16cd7c8d0f9c715115ce12da5c245fbcd2416) ) /* (2010/1/18 BLACK LABEL) */
-
-	ROM_REGION( 0x8400000, "game", ROMREGION_ERASEFF)
-	ROM_LOAD( "u2", 0x000000, 0x8400000, CRC(29f9d73a) SHA1(ed978ab5e3ad8c05e7778a91bfb5aaa17b0f72d9) )
-
-	ROM_REGION( 0x800000, "ymz770", ROMREGION_ERASEFF)
-	ROM_LOAD16_WORD_SWAP( "u23", 0x000000, 0x400000, CRC(36d4093b) SHA1(4aed7e2f7c0d2c9bceeb110a9907d8d99d55f4c3) )
-	ROM_LOAD16_WORD_SWAP( "u24", 0x400000, 0x400000, CRC(31f9eb0a) SHA1(322158779e969bb321241065dd49c1167b91ff6c) )
-ROM_END
-
 READ64_MEMBER( cv1k_state::mushisam_speedup_r )
 {
 	if (m_maincpu->pc()== 0xc04a2aa ) m_maincpu->spin_until_time( attotime::from_usec(10)); // mushisam / mushisamb
@@ -904,57 +912,54 @@ DRIVER_INIT_MEMBER(cv1k_state,dpddfk)
 // The black label versions are intentionally not set as clones, they were re-releases with different game codes, not bugfixes.
 
 // CA011  Mushihime-Sama
-GAME( 2004, mushisam,   0,        cv1k,   cv1k, cv1k_state, mushisam,  ROT270, "Cave (AMI license)", "Mushihime-Sama (2004/10/12.MASTER VER.)",                         0 )
-GAME( 2004, mushisama,  mushisam, cv1k,   cv1k, cv1k_state, ibara,     ROT270, "Cave (AMI license)", "Mushihime-Sama (2004/10/12 MASTER VER.)",                         0 )
-GAME( 2004, mushisamb,  mushisam, cv1k,   cv1k, cv1k_state, mushisam,  ROT270, "Cave (AMI license)", "Mushihime-Sama (2004/10/12 MASTER VER)",                          0 )
+GAME( 2004, mushisam,   0,        cv1k,   cv1k, cv1k_state, mushisam,  ROT270, "Cave (AMI license)", "Mushihime-Sama (Japan, 2004/10/12.MASTER VER.)",                         0 )
+GAME( 2004, mushisama,  mushisam, cv1k,   cv1k, cv1k_state, ibara,     ROT270, "Cave (AMI license)", "Mushihime-Sama (Japan, 2004/10/12 MASTER VER.)",                         0 )
+GAME( 2004, mushisamb,  mushisam, cv1k,   cv1k, cv1k_state, mushisam,  ROT270, "Cave (AMI license)", "Mushihime-Sama (Japan, 2004/10/12 MASTER VER)",                          0 )
 
 // CA012  Ibara
-GAME( 2005, ibara,      0,        cv1k,   cv1k, cv1k_state, ibara,     ROT270, "Cave (AMI license)", "Ibara (2005/03/22 MASTER VER..)",                                 0 )
+GAME( 2005, ibara,      0,        cv1k,   cv1ks, cv1k_state, ibara,     ROT270, "Cave (AMI license)",   "Ibara (Japan, 2005/03/22 MASTER VER.., '06. 3. 7 ver.)",                               0 )
 
 // CA012B Ibara Kuro Black Label
-GAME( 2006, ibarablk,   0,        cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Ibara Kuro Black Label (2006/02/06. MASTER VER.)",                0 )
-GAME( 2006, ibarablka,  ibarablk, cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Ibara Kuro Black Label (2006/02/06 MASTER VER.)",                 0 )
+GAME( 2006, ibarablk,   0,        cv1k,   cv1ks, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Ibara Kuro Black Label (Japan, 2006/02/06. MASTER VER.)",         0 )
+GAME( 2006, ibarablka,  ibarablk, cv1k,   cv1ks, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Ibara Kuro Black Label (Japan, 2006/02/06 MASTER VER.)",                 0 )
 
 // CA013  Espgaluda II
-GAME( 2005, espgal2,    0,        cv1k,   cv1k, cv1k_state, espgal2,   ROT270, "Cave (AMI license)", "Espgaluda II (2005/11/14 MASTER VER)",                            0 )
+GAME( 2005, espgal2,    0,        cv1k,   cv1k, cv1k_state, espgal2,   ROT270, "Cave (AMI license)", "Espgaluda II (Japan, 2005/11/14 MASTER VER)",                            0 )
 
 // CA???  Puzzle! Mushihime-Tama
-GAME( 2005, mushitam,   0,        cv1k,   cv1k, cv1k_state, mushitam,  ROT0,   "Cave (AMI license)", "Puzzle! Mushihime-Tama (2005/09/09.MASTER VER)",                  0 )
-GAME( 2005, mushitama,  mushitam, cv1k,   cv1k, cv1k_state, mushitam,  ROT0,   "Cave (AMI license)", "Puzzle! Mushihime-Tama (2005/09/09 MASTER VER)",                  0 )
+GAME( 2005, mushitam,   0,        cv1k,   cv1k, cv1k_state, mushitam,  ROT0,   "Cave (AMI license)", "Puzzle! Mushihime-Tama (Japan, 2005/09/09.MASTER VER)",                  0 )
+GAME( 2005, mushitama,  mushitam, cv1k,   cv1k, cv1k_state, mushitam,  ROT0,   "Cave (AMI license)", "Puzzle! Mushihime-Tama (Japan, 2005/09/09 MASTER VER)",                  0 )
 
 // CA014  Pink Sweets: Ibara Sorekara
-GAME( 2006, pinkswts,   0,        cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Pink Sweets: Ibara Sorekara (2006/04/06 MASTER VER....)",         0 )
-GAME( 2006, pinkswtsa,  pinkswts, cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Pink Sweets: Ibara Sorekara (2006/04/06 MASTER VER...)",          0 )
-GAME( 2006, pinkswtsb,  pinkswts, cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Pink Sweets: Ibara Sorekara (2006/04/06 MASTER VER.)",            0 )
-GAME( 2006, pinkswtsx,  pinkswts, cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Pink Sweets: Ibara Sorekara (2006/xx/xx MASTER VER.)",            0 ) // defaults to freeplay, possibly bootlegged from show/dev version?
+GAME( 2006, pinkswts,   0,        cv1k,   cv1ks, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Pink Sweets: Ibara Sorekara (Japan, 2006/04/06 MASTER VER....)",         0 )
+GAME( 2006, pinkswtsa,  pinkswts, cv1k,   cv1ks, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Pink Sweets: Ibara Sorekara (Japan, 2006/04/06 MASTER VER...)",          0 )
+GAME( 2006, pinkswtsb,  pinkswts, cv1k,   cv1ks, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Pink Sweets: Ibara Sorekara (Japan, 2006/04/06 MASTER VER.)",            0 )
+GAME( 2006, pinkswtsx,  pinkswts, cv1k,   cv1ks, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Pink Sweets: Ibara Sorekara (Japan, 2006/xx/xx MASTER VER.)",            0 ) // defaults to freeplay, possibly bootlegged from show/dev version?
 
 // CA015  Mushihime-Sama Futari
-GAME( 2006, futari15,   0,        cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Ver 1.5 (2006/12/8.MASTER VER. 1.54.)",     0 )
-GAME( 2006, futari15a,  futari15, cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Ver 1.5 (2006/12/8 MASTER VER 1.54)",       0 )
-GAME( 2006, futari10,   futari15, cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Ver 1.0 (2006/10/23 MASTER VER.)",          0 )
+GAME( 2006, futari15,   0,        cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Ver 1.5 (Japan, 2006/12/8.MASTER VER. 1.54.)",     0 )
+GAME( 2006, futari15a,  futari15, cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Ver 1.5 (Japan, 2006/12/8 MASTER VER 1.54)",       0 )
+GAME( 2006, futari10,   futari15, cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Ver 1.0 (Japan, 2006/10/23 MASTER VER.)",          0 )
 
 // CA016  Muchi Muchi Pork!
-GAME( 2007, mmpork,     0,        cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Muchi Muchi Pork! (2007/ 4/17 MASTER VER.)",                      0 )
+GAME( 2007, mmpork,     0,        cv1k,   cv1ks, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Muchi Muchi Pork! (Japan, 2007/ 4/17 MASTER VER.)",                      0 )
 
 // CA015B Mushihime-Sama Futari Black Label
-GAME( 2007, futaribl,   0,        cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Black Label (2009/11/27 INTERNATIONAL BL)", 0 )
-GAME( 2007, futariblj,  futaribl, cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Black Label (2007/12/11 BLACK LABEL VER)",  0 )
+GAME( 2007, futaribl,   0,        cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Black Label - Another Ver (World, 2009/11/27 INTERNATIONAL BL)", 0 )
+GAME( 2007, futariblj,  futaribl, cv1k,   cv1k, cv1k_state, pinkswts,  ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Black Label (Japan, 2007/12/11 BLACK LABEL VER)",  0 )
 
 // CA017  Deathsmiles
-GAME( 2007, deathsml,   0,        cv1k,   cv1k, cv1k_state, deathsml,  ROT0,   "Cave (AMI license)", "Deathsmiles (2007/10/09 MASTER VER)",                             0 )
+GAME( 2007, deathsml,   0,        cv1k,   cv1k, cv1k_state, deathsml,  ROT0,   "Cave (AMI license)", "Deathsmiles (Japan, 2007/10/09 MASTER VER)",                             0 )
 
 // CA017B Deathsmiles Black Label
-GAME( 2008, dsmbl,      0,        cv1k_d, cv1k, cv1k_state, dpddfk,    ROT0,   "Cave (AMI license)", "Deathsmiles MegaBlack Label (2008/10/06 MEGABLACK LABEL VER)",    0 )
+GAME( 2008, dsmbl,      0,        cv1k_d, cv1k, cv1k_state, dpddfk,    ROT0,   "Cave (AMI license)", "Deathsmiles MegaBlack Label (Japan, 2008/10/06 MEGABLACK LABEL VER)",    0 )
 
 // CA019  Do-Don-Pachi Dai-Fukkatsu
-GAME( 2008, ddpdfk,     0,        cv1k_d, cv1k, cv1k_state, dpddfk,    ROT270, "Cave (AMI license)", "DoDonPachi Dai-Fukkatsu Ver 1.5 (2008/06/23  MASTER VER 1.5)",    0 )
-GAME( 2008, ddpdfk10,   ddpdfk,   cv1k_d, cv1k, cv1k_state, dpddfk,    ROT270, "Cave (AMI license)", "DoDonPachi Dai-Fukkatsu Ver 1.0 (2008/05/16  MASTER VER)",        0 )
-
-// CA019B Do-Don-Pachi Dai-Fukkatsu Black Label
-GAME( 2010, dfkbl,      0,        cv1k_d, cv1k, cv1k_state, dpddfk,    ROT270, "Cave (AMI license)", "DoDonPachi Dai-Fukkatsu Black Label (2010/1/18 BLACK LABEL)",     0 )
+GAME( 2008, ddpdfk,     0,        cv1k_d, cv1k, cv1k_state, dpddfk,    ROT270, "Cave (AMI license)", "DoDonPachi Dai-Fukkatsu Ver 1.5 (Japan, 2008/06/23  MASTER VER 1.5)",    0 )
+GAME( 2008, ddpdfk10,   ddpdfk,   cv1k_d, cv1k, cv1k_state, dpddfk,    ROT270, "Cave (AMI license)", "DoDonPachi Dai-Fukkatsu Ver 1.0 (Japan, 2008/05/16  MASTER VER)",        0 )
 
 // CMDL01 Medal Mahjong Moukari Bancho
-GAME( 2007, mmmbanc,    0,        cv1k,   cv1k, cv1k_state, pinkswts,  ROT0,   "Cave (AMI license)", "Medal Mahjong Moukari Bancho (2007/06/05 MASTER VER.)",            GAME_NOT_WORKING )
+GAME( 2007, mmmbanc,    0,        cv1k,   cv1k, cv1k_state, pinkswts,  ROT0,   "Cave (AMI license)", "Medal Mahjong Moukari Bancho (Japan, 2007/06/05 MASTER VER.)",            GAME_NOT_WORKING )
 
 ROM_START( futari15o )
 	ROM_REGION( 0x400000, "maincpu", ROMREGION_ERASEFF)
@@ -1008,7 +1013,121 @@ ROM_START( mushitamo )
 	ROM_LOAD16_WORD_SWAP("u24", 0x400000, 0x400000, CRC(6feeb9a1) SHA1(992711c80e660c32f97b343c2ce8184fddd7364e) )
 ROM_END
 
-GAME( 2006, futari15o,  futari15, cv1k,   cv1k, cv1k_state, espgal2,   ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Ver 1.5 (Old DUMP, 2006/12/8 MASTER VER 1.54)",      0 )
-GAME( 2004, mushisamo,  mushisam, cv1k,   cv1k, cv1k_state, mushisam,  ROT270, "Cave (AMI license)", "Mushihime-Sama (Old DUMP, 2004/10/12 MASTER VER.)",                        0 )
-GAME( 2004, mushisambo, mushisam, cv1k,   cv1k, cv1k_state, ibara,     ROT270, "Cave (AMI license)", "Mushihime-Sama (Old DUMP, 2004/10/12 MASTER VER)",                         0 )
-GAME( 2005, mushitamo,  mushitam, cv1k,   cv1k, cv1k_state, mushisam,  ROT0,   "Cave (AMI license)", "Puzzle! Mushihime-Tama (Old DUMP, 2005/09/09 MASTER VER)",                 0 )
+ROM_START( dfkbl )
+	ROM_REGION( 0x400000, "maincpu", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "u4", 0x000000, 0x400000, CRC(8092ca9d) SHA1(75e16cd7c8d0f9c715115ce12da5c245fbcd2416) ) /* (2010/1/18 BLACK LABEL) */
+
+	ROM_REGION( 0x8400000, "game", ROMREGION_ERASEFF)
+	ROM_LOAD( "u2", 0x000000, 0x8400000, CRC(29f9d73a) SHA1(ed978ab5e3ad8c05e7778a91bfb5aaa17b0f72d9) )
+
+	ROM_REGION( 0x800000, "ymz770", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "u23", 0x000000, 0x400000, CRC(36d4093b) SHA1(4aed7e2f7c0d2c9bceeb110a9907d8d99d55f4c3) )
+	ROM_LOAD16_WORD_SWAP( "u24", 0x400000, 0x400000, CRC(31f9eb0a) SHA1(322158779e969bb321241065dd49c1167b91ff6c) )
+ROM_END
+
+ROM_START( ddpsdoj )
+	ROM_REGION( 0x400000, "maincpu", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP("u4", 0x000000, 0x400000, CRC(e2a4411c) SHA1(f8b2b6326dd8eeae99b8b1ab2bd5a3f0b9c7f027) )
+	ROM_IGNORE( 0x000100 ) // Flash extra bytes
+
+	ROM_REGION( 0x8400000, "game", ROMREGION_ERASEFF)
+	ROM_LOAD("u2", 0x000000, 0x8400000, CRC(668e4cd6) SHA1(da0b10865df3a3e46cf8a109ca88a551faba4483) )
+
+	ROM_REGION( 0x800000, "ymz770", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP("u23", 0x000000, 0x400000, CRC(ac94801c) SHA1(cbcc6d5d89860bc961967e1d3b7c329adaf200c5) )
+	ROM_IGNORE( 0x000100 ) // Flash extra bytes
+	ROM_LOAD16_WORD_SWAP("u24", 0x400000, 0x400000, CRC(f593045b) SHA1(91b92870d0dd2a7817cb0059cc750e2393686f4c) )
+	ROM_IGNORE( 0x000100 ) // Flash extra bytes
+ROM_END
+
+ROM_START( akatana )
+	ROM_REGION( 0x400000, "maincpu", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "u4", 0x000000, 0x400000, CRC(613fd380) SHA1(6e28480eef3b483d00b42d811a9d2c7fa1097924) ) // (2010/ 8/13 MASTER VER.)
+
+	ROM_REGION( 0x8400000, "game", ROMREGION_ERASEFF)
+	ROM_LOAD( "u2", 0x000000, 0x8400000, CRC(89a2e1a5) SHA1(e6f4ec974406283665697fdd52bd606d0337dd11) )
+
+	ROM_REGION( 0x800000, "ymz770", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "u23", 0x000000, 0x400000, CRC(34a67e24) SHA1(78a7e82123b86311f1116a80c39f147b8b695549) )
+	ROM_LOAD16_WORD_SWAP( "u24", 0x400000, 0x400000, CRC(10760fed) SHA1(b70f4506c00f3901ff38f5efd4b897af1afc7a0c) )
+ROM_END
+
+ROM_START( espgal2a ) // newer CV1000-B PCB revision, updated FPGA firmware, no changes in game code or data
+	ROM_REGION( 0x400000, "maincpu", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "espgal2a_u4", 0x000000, 0x200000, CRC(843608b8) SHA1(2f5fcd38e76df531a923cd9956104cef5185aaa9) ) // (2005/11/14 MASTER VER)
+	ROM_RELOAD(0x200000,0x200000)
+
+	ROM_REGION( 0x8400000, "game", ROMREGION_ERASEFF)
+	ROM_LOAD( "u2", 0x000000, 0x8400000, CRC(222f58c7) SHA1(d47a5085a1debd9cb8c61d88cd39e4f5036d1797) ) // (2005/11/14 MASTER VER)
+
+	ROM_REGION( 0x800000, "ymz770", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "u23", 0x000000, 0x400000, CRC(b9a10c22) SHA1(4561f95c6018c9716077224bfe9660e61fb84681) )
+	ROM_LOAD16_WORD_SWAP( "u24", 0x400000, 0x400000, CRC(c76b1ec4) SHA1(b98a53d41a995d968e0432ed824b0b06d93dcea8) )
+ROM_END
+
+ROM_START( espgal2b )
+	ROM_REGION( 0x400000, "maincpu", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "espgal2b_u4", 0x000000, 0x200000, CRC(09c908bb) SHA1(7d6031fd3542b3e1d296ff218feb40502fd78694) ) // (2005/11/14 MASTER VER)
+	ROM_RELOAD(0x200000,0x200000)
+
+	ROM_REGION( 0x8400000, "game", ROMREGION_ERASEFF)
+	ROM_LOAD( "u2", 0x000000, 0x8400000, CRC(222f58c7) SHA1(d47a5085a1debd9cb8c61d88cd39e4f5036d1797) ) // (2005/11/14 MASTER VER)
+
+	ROM_REGION( 0x800000, "ymz770", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "u23", 0x000000, 0x400000, CRC(b9a10c22) SHA1(4561f95c6018c9716077224bfe9660e61fb84681) )
+	ROM_LOAD16_WORD_SWAP( "u24", 0x400000, 0x400000, CRC(c76b1ec4) SHA1(b98a53d41a995d968e0432ed824b0b06d93dcea8) )
+ROM_END
+
+ROM_START( ibarao )
+	ROM_REGION( 0x400000, "maincpu", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "ibarao_u4", 0x000000, 0x200000, CRC(8e6c155d) SHA1(38ac2107dc7824836e2b4e04c7180d5ae43c9b79) ) // (2005/03/22 MASTER VER..)
+	ROM_RELOAD(0x200000,0x200000)
+
+	ROM_REGION( 0x8400000, "game", ROMREGION_ERASEFF)
+	ROM_LOAD( "u2", 0x000000, 0x8400000, CRC(55840976) SHA1(4982bdce84f9603adfed7a618f18bc80359ab81e) ) // (2005/03/22 MASTER VER..)
+
+	ROM_REGION( 0x800000, "ymz770", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "u23", 0x000000, 0x400000, CRC(ee5e585d) SHA1(7eeba4ee693060e927f8c46b16e39227c6a62392) )
+	ROM_LOAD16_WORD_SWAP( "u24", 0x400000, 0x400000, CRC(f0aa3cb6) SHA1(f9d137cd879e718811b2d21a0af2a9c6b7dca2f9) )
+ROM_END
+
+ROM_START( mmatsuri )
+	ROM_REGION( 0x400000, "maincpu", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP("u4", 0x000000, 0x200000, CRC(6af99f0e) SHA1(e91b3a7c329a9ce66687b48a9f2e1a8ea7282cd5) ) // (2011/5/23 CAVEMATSURI VER1.5)
+	ROM_RELOAD(0x200000,0x200000)
+
+	ROM_REGION( 0x8400000, "game", ROMREGION_ERASEFF)
+	ROM_LOAD("u2", 0x000000, 0x8400000, CRC(fbc6f3c1) SHA1(9967c56121a2886261026665d9f64978f2cb4dda) )
+
+	ROM_REGION( 0x800000, "ymz770", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP("u23", 0x000000, 0x400000, CRC(6dff634f) SHA1(781042316fae904657326189b3b46e49a46ba675) )
+	ROM_LOAD16_WORD_SWAP("u24", 0x400000, 0x400000, CRC(f228b801) SHA1(b9dd2a7462ccad4b20b8cd7eaefcdfd881dd413f) )
+ROM_END
+
+// modification based on 2006/04/06 MASTER VER....
+// This set is dumped from bootleg PCB with pre-patched Suicide Club hack, These CRC32 checksums are matches compares to authors homepage's one.
+ROM_START( pinkswtssc )
+	ROM_REGION( 0x400000, "maincpu", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "suicideclub.u4", 0x0000, 0x200000, CRC(5e03662f) SHA1(b974204b8dcd55fc1b7775f7c1806150919caff3) ) // (2017/10/31 SUICIDECLUB VER.)
+	ROM_RELOAD(0x200000,0x200000)
+
+	ROM_REGION( 0x8400000, "game", ROMREGION_ERASEFF)
+	ROM_LOAD( "suicideclub.u2", 0x000000, 0x8400000, CRC(32324608) SHA1(cec1416c943520cb3f91eb295e2ba864a0db7d45) )
+
+	ROM_REGION( 0x800000, "ymz770", ROMREGION_ERASEFF)
+	ROM_LOAD16_WORD_SWAP( "u23", 0x000000, 0x400000, CRC(4b82d250) SHA1(ee98dbc3f791efb6d58f3945bcb2044667ae7978) )
+	ROM_LOAD16_WORD_SWAP( "u24", 0x400000, 0x400000, CRC(e93f0627) SHA1(6f5ec0ade87f7fc42a58a8f125557a4d1f3f187d) )
+ROM_END
+
+GAME( 2006, futari15o,  futari15, cv1k,   cv1k, cv1k_state, espgal2,   ROT270, "Cave (AMI license)", "Mushihime-Sama Futari Ver 1.5 (Japan, Old DUMP, 2006/12/8 MASTER VER 1.54)", 0 )
+GAME( 2004, mushisamo,  mushisam, cv1k,   cv1k, cv1k_state, mushisam,  ROT270, "Cave (AMI license)", "Mushihime-Sama (Japan, Old DUMP, 2004/10/12 MASTER VER.)", 0 )
+GAME( 2004, mushisambo, mushisam, cv1k,   cv1k, cv1k_state, ibara,     ROT270, "Cave (AMI license)", "Mushihime-Sama (Japan, Old DUMP, 2004/10/12 MASTER VER)",                         0 )
+GAME( 2005, mushitamo,  mushitam, cv1k,   cv1k, cv1k_state, mushisam,  ROT0,   "Cave (AMI license)", "Puzzle! Mushihime-Tama (japan Old DUMP, 2005/09/09 MASTER VER)",                 0 )
+GAME( 2010, dfkbl,      0,        cv1k_d, cv1k, cv1k_state, dpddfk,    ROT270, "Cave (AMI license)", "DoDonPachi Dai-Fukkatsu Black Label (Japan, 2010/1/18 BLACK LABEL)", 0 )
+GAME( 2012, ddpsdoj,    0,        cv1k_d, cv1k, cv1k_state, dpddfk,    ROT270, "Cave", "DoDonPachi SaiDaiOuJou (Japan, 2012/ 4/20)", 0 )
+GAME( 2010, akatana,    0,        cv1k_d, cv1k, cv1k_state, dpddfk,    ROT0,   "Cave", "Akai Katana (Japan, 2010/ 8/13 MASTER VER.)", 0 )
+GAME( 2005, espgal2a,   espgal2,  cv1k,   cv1k, cv1k_state, espgal2,   ROT270, "Cave (AMI license)",   "Espgaluda II (Japan, 2005/11/14 MASTER VER, newer CV1000-B PCB)", 0 )
+GAME( 2005, espgal2b,   espgal2,  cv1k,   cv1k, cv1k_state, espgal2,   ROT270, "Cave (AMI license)",   "Espgaluda II (Japan, 2005/11/14 MASTER VER, original CV1000-B PCB)", 0 )
+GAME( 2005, ibarao,     ibara,    cv1k,   cv1ks, cv1k_state, ibara,    ROT270, "Cave (AMI license)",   "Ibara (Japan, 2005/03/22 MASTER VER..)",                                               0 )
+GAME( 2011, mmatsuri,   0,        cv1k,   cv1k, cv1k_state, mushisam,  ROT270, "Cave (AMI license)",   "Mushihime-Sama Matsuri (Japan, 2011/5/23 CAVEMATSURI VER1.5)",                         0 )
+GAME( 2017, pinkswtssc, pinkswts, cv1k,   cv1ks,cv1k_state, pinkswts,  ROT270, "bootleg (Four Horsemen)", "Pink Sweets: Suicide Club (2017/10/31 SUICIDECLUB VER., bootleg)",                  0 ) // dumped from bootleg with pre-patched hack
